@@ -1,5 +1,5 @@
 /* Smart Empire — service worker: mtandao kwanza, cache ikiwa offline */
-const CACHE = 'smart-empire-v12';
+const CACHE = 'smart-empire-v13';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

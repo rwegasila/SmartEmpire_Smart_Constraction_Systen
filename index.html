@@ -6628,10 +6628,11 @@ tr:hover .badge,tr:hover .se-pill{transform:scale(1.06)}
     const t0=performance.now(),dur=1100;let last=fmt(0);el.textContent=last;
     (function step(now){
       if(el.textContent!==last)return; /* app imebadilisha thamani — acha */
-      const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);
+      const k=Math.min(1,Math.max(0,(now-t0)/dur)),e=1-Math.pow(1-k,3);
       last=k<1?fmt(target*e):txt;el.textContent=last;
       if(k<1)requestAnimationFrame(step);
     })(t0);
+    setTimeout(function(){if(el.textContent===last&&last!==txt){last=txt;el.textContent=txt;}},dur+400);
   }
   function enhance(root){
     let i=0;
@@ -7023,3 +7024,191 @@ tr.empty::before{display:none}
 #auth #loginBtn:hover,#auth #suBtn:hover{transform:translateY(-2px)}
 </style>
 <!-- END v12 -->
+
+<!-- ============================================================
+     SMART EMPIRE v13 — SIMU ZOTE (mobile-first): header fupi, menyu inayoteleza,
+     majedwali kuwa kadi, tabo za kuteleza, login fupi yenye "sheet"
+     ============================================================ -->
+<style id="se13-mobile">
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,canvas,video,iframe{max-width:100%}
+main,.card,.layout>*{min-width:0}
+
+@media(max-width:750px){
+  /* ---------- HEADER: fupi na haibaki juu ---------- */
+  header{position:relative!important;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 0!important;gap:8px!important;row-gap:8px!important}
+  header>div:first-child{order:1;flex:1 1 auto;min-width:0}
+  .brand{font-size:15px!important;gap:8px!important;line-height:1.15}
+  .brand-emblem{width:32px!important;height:32px!important}
+  #brandName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:58vw}
+  #brandTag{display:none!important}
+  #cloudStatus{order:2;flex:0 0 auto}
+  #cloudStatus *{font-size:10px!important}
+  #cloudSync{display:none!important}
+  .hdr-tools{order:3;flex:1 1 100%!important;display:flex!important;flex-wrap:nowrap!important;gap:6px!important;width:100%}
+  .hdr-tools>*{flex:0 0 auto}
+  .hdr-tools select{flex:1 1 0!important;min-width:0!important;max-width:none!important}
+  .hdr-tools button,.hdr-tools select{height:36px!important;font-size:12px!important}
+  .hdr-tools .icon-btn-sm span{display:none}
+  #who{order:4;flex:1 1 100%;min-width:0;white-space:nowrap;overflow:hidden;font-size:13px;justify-content:flex-start}
+  #who button.alt{flex:0 0 auto;margin-left:auto}
+  #who button.alt+button.alt{margin-left:0}
+  .se9-ticker{order:5;margin:0 -14px!important;height:30px}
+  .se9-ticker-lbl{font-size:9.5px!important;padding:0 18px 0 10px!important;letter-spacing:.08em}
+  .se9-ticker-lbl{clip-path:polygon(0 0,100% 0,calc(100% - 9px) 100%,0 100%)}
+
+  /* ---------- MENYU: ukanda unaoteleza, unabaki juu ---------- */
+  .layout{grid-template-rows:auto 1fr!important;align-content:start;min-height:0!important}
+  aside{position:sticky!important;top:0!important;z-index:45!important;align-self:start;height:auto!important;max-height:none!important;
+    display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;gap:6px!important;padding:8px 10px!important;
+    scroll-snap-type:x proximity;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  aside::-webkit-scrollbar{display:none}
+  aside::before{display:none!important}
+  aside .nav{flex:0 0 auto!important;width:auto!important;height:auto!important;margin:0!important;padding:6px 12px 6px 6px!important;font-size:12.5px!important;border-radius:99px!important;scroll-snap-align:start;white-space:nowrap}
+  aside .nav>span[aria-hidden]{width:28px!important;height:28px!important;border-radius:50%!important;font-size:13px!important}
+  aside .nav.active::before{display:none}
+  aside .nav:hover{transform:none!important}
+
+  /* ---------- KURASA ---------- */
+  #app{padding:14px 12px 90px!important}
+  main h1{font-size:22px!important;margin-bottom:10px!important}
+  main .row>h1,main .row>h2,main .inv-top>h2{flex:1 1 100%!important;min-width:0!important}
+  main .row>select,main .row>input{flex:1 1 100%!important}
+  main .row{gap:8px!important}
+  .se10-crumb{font-size:11px;margin-bottom:8px}
+  .se10-crumb em{display:none}
+  .card{padding:16px!important;border-radius:18px!important}
+  .card>h3:first-child,.card>h2:first-child{font-size:16px}
+  .hero,.pg-hero,.global-hero{padding:22px 18px!important;border-radius:20px!important}
+  .pg-hero h1,.hero h1{font-size:23px!important}
+  .pg-hero p,.hero p{font-size:14px!important}
+  .pg-toolbar input{min-width:0!important;flex:1 1 100%!important}
+  .pg-toolbar button{flex:1 1 100%!important}
+  .pg-grid,.portfolio-grid,.plan-grid,.global-grid,.prod-grid,.kanban{grid-template-columns:1fr!important}
+  .grid:has(>.card>.metric){grid-template-columns:1fr 1fr!important;gap:10px!important}
+  .grid>.card .metric{font-size:26px!important}
+  .grid>.card{margin-bottom:0}
+  .fin-hero-row,.fin-kpi-grid,.fin-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  .fin-hero-row>*:first-child{grid-column:1/-1}
+  .fin-hero-card{padding:14px!important;border-radius:16px!important}
+  .fin-hero-card .val,.fin-card .val{font-size:clamp(15px,4.6vw,20px)!important;word-break:break-word}
+  .fin-hero-row>*:first-child .val{font-size:26px!important}
+  .fin-hero-card .lbl,.fin-card .lbl{font-size:10px!important}
+  .fin-hero-card .sub{font-size:11px!important}
+  .inv-kpis{grid-template-columns:1fr 1fr!important}
+  .inv-kpi .v{font-size:15px!important;white-space:normal!important;word-break:break-word}
+  .inv-toolbar>*{flex:1 1 100%!important}
+  .inv-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .inv-chips::-webkit-scrollbar{display:none}
+  .inv-chip{flex:0 0 auto;white-space:nowrap}
+  .wx-map{height:300px!important}
+  .chartbox{height:220px!important}
+
+  /* Tabo: mstari mmoja unaoteleza */
+  .tabs{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:0 0 auto!important;scroll-snap-align:start;padding:8px 12px!important;font-size:12.5px!important}
+
+  /* Vitufe rahisi kugusa */
+  main button{min-height:42px}
+  main .row>button{flex:1 1 auto!important}
+  .inv-acts{grid-template-columns:1fr!important}
+
+  /* ---------- MAJEDWALI KUWA KADI ---------- */
+  main table.se13-cards{min-width:0!important;border:0}
+  main table.se13-cards thead,main table.se13-cards tr.se13-head{display:none!important}
+  main table.se13-cards,main table.se13-cards tbody{display:block;width:100%}
+  main table.se13-cards tr{display:block;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:6px 14px;margin:0 0 10px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  main table.se13-cards td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0!important;border-bottom:1px dashed var(--line)!important;text-align:right!important;white-space:normal!important;min-width:0!important;background:transparent!important;word-break:break-word}
+  main table.se13-cards td:last-child{border-bottom:0!important}
+  main table.se13-cards td::before{content:attr(data-label);flex:0 0 42%;text-align:left;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main table.se13-cards td:not([data-label])::before,main table.se13-cards td[data-label=""]::before{display:none}
+  main table.se13-cards td:not([data-label]),main table.se13-cards td[data-label=""]{justify-content:flex-end}
+  main table.se13-cards td:first-child{font-size:15px;font-weight:800!important}
+  main table.se13-cards td[colspan]{justify-content:center;text-align:center!important}
+  main table.se13-cards td button{min-height:38px}
+  main table.se13-cards tr:hover td{background:transparent!important}
+  .card:has(>table.se13-cards){overflow:visible!important;background:transparent;border:0!important;box-shadow:none!important;padding:0!important}
+  /* Majedwali mapana yasiyogeuzwa: yateleze ndani ya kadi */
+  .se13-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  /* Kitufe cha kurudi juu */
+  #se10Top{right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:42px;height:42px}
+  .se9-foot{flex-direction:column;gap:4px;text-align:center;align-items:center}
+  .toast-wrap{left:10px;right:10px}
+
+  /* ---------- LOGIN YA SIMU ---------- */
+  #auth .lm-wrap{flex-direction:column!important;min-height:100dvh}
+  #auth .lm-brand{flex:0 0 auto!important;min-height:0!important;padding:14px 18px 0!important}
+  #auth .lm-lang{margin-bottom:10px!important}
+  #auth .lm-lang select{height:34px;min-width:0;font-size:12px!important}
+  #auth .lm-brand-inner{flex-direction:row!important;flex-wrap:wrap;align-items:center!important;gap:12px;margin:0 0 150px!important;padding:4px 0 0!important}
+  #auth .lm-logo.se12-logo{width:54px!important;height:54px!important;padding:8px!important;border-radius:16px!important;margin:0!important;flex:0 0 auto}
+  #auth .lm-logo.se12-logo::after{border-radius:20px;inset:-5px}
+  #auth .lm-brand-inner h1{flex:1 1 0;min-width:0;font-size:clamp(20px,6.4vw,27px)!important;margin:0!important}
+  #auth .se9-type{flex:1 1 100%;font-size:14px!important;padding:8px 12px!important;min-width:0!important}
+  #auth .se11-scene{height:150px!important;bottom:20px!important}
+  #auth .se9-mq{display:none!important}
+  #auth .lm-brand-inner{margin-bottom:170px!important}
+  #auth .se9-mq .se9-track span{font-size:11.5px!important;padding:0 14px!important}
+  #auth .lm-formside{flex:1 1 auto!important;margin-top:-22px;position:relative;z-index:3;border-radius:26px 26px 0 0;padding:20px 14px 28px!important;align-items:flex-start!important;box-shadow:0 -14px 30px -18px rgba(0,20,52,.6)}
+  #auth .lm-formside::after{content:'';position:absolute;top:9px;left:50%;width:44px;height:5px;margin-left:-22px;border-radius:99px;background:var(--line)}
+  #auth .lm-card{max-width:none!important;padding:24px 18px 20px!important;border-radius:22px!important;margin-top:6px}
+  #auth .lm-card h2{font-size:24px!important}
+  #auth .empire-brandbar{margin-bottom:12px}
+  #auth .se10-trust{gap:8px 12px;font-size:11px}
+}
+@media(max-width:380px){
+  .hdr-tools button,.hdr-tools select{height:34px!important;padding:0 7px!important}
+  .grid:has(>.card>.metric){gap:8px!important}
+  .grid>.card .metric{font-size:22px!important}
+  .fin-hero-row,.fin-kpi-grid,.fin-grid,.inv-kpis{grid-template-columns:1fr!important}
+  #who .badge{display:none}
+  #auth .lm-brand-inner h1{font-size:19px!important}
+}
+/* Simu iliyolazwa (landscape) */
+@media(max-height:500px) and (orientation:landscape){
+  header{position:relative!important}
+  #auth .se11-scene{display:none}
+  #auth .lm-brand-inner{margin-bottom:16px!important}
+}
+</style>
+<script>
+(function(){
+  'use strict';
+  var mq=window.matchMedia('(max-width:750px)');
+  function labelTables(root){
+    root.querySelectorAll('main table').forEach(function(tb){
+      if(tb.closest('.inv-paper')||tb.classList.contains('inv-items')||tb.classList.contains('wx-plan'))return;
+      var headRow=tb.querySelector('thead tr')||(function(){var r=tb.querySelector('tr');return r&&r.querySelector('th')&&!r.querySelector('td')?r:null;})();
+      if(!headRow){if(!tb.parentNode.classList.contains('se13-scroll')&&tb.parentNode.tagName!=='TD'){var w=document.createElement('div');w.className='se13-scroll';tb.parentNode.insertBefore(w,tb);w.appendChild(tb);}return;}
+      var heads=[].map.call(headRow.children,function(th){return (th.textContent||'').trim();});
+      if(!tb.querySelector('thead')&&!headRow.classList.contains('se13-head'))headRow.classList.add('se13-head');
+      tb.querySelectorAll('tr').forEach(function(tr){
+        if(tr===headRow)return;
+        var i=0;[].forEach.call(tr.children,function(td){
+          if(td.tagName!=='TD'){i+=td.colSpan||1;return;}
+          if(!td.hasAttribute('data-label')&&!(td.colSpan>1))td.setAttribute('data-label',heads[i]||'');
+          i+=td.colSpan||1;
+        });
+      });
+      if(!tb.classList.contains('se13-cards'))tb.classList.add('se13-cards');
+    });
+  }
+  var lastActive=null;
+  function centerNav(){
+    if(!mq.matches)return;
+    var nav=document.getElementById('nav'),a=nav&&nav.querySelector('.nav.active');
+    if(!a||a===lastActive)return;lastActive=a;
+    nav.scrollTo({left:Math.max(0,a.offsetLeft-(nav.clientWidth-a.offsetWidth)/2),behavior:'smooth'});
+  }
+  var pending=false;
+  function run(){
+    if(pending)return;pending=true;
+    requestAnimationFrame(function(){pending=false;var app=document.getElementById('app');if(app)labelTables(app);centerNav();});
+  }
+  new MutationObserver(run).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  run();
+})();
+</script>
+<!-- END v13 -->
