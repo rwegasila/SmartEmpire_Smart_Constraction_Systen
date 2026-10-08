@@ -1,0 +1,13 @@
+{
+  "name": "Smart Empire Platform System",
+  "short_name": "Smart Empire",
+  "description": "Global construction management, finance & intelligence platform.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#04102a",
+  "theme_color": "#0b1220",
+  "icons": [
+    { "src": "icon.png", "sizes": "256x256", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

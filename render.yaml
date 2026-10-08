@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: smart-empire-platform
+    runtime: static
+    staticPublishPath: .
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
